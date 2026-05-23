@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("landscape-be")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0ede3d8c45a7a3ddd4fef4f00d0928b33fa4044f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b3cbdbba39d08b4f83595f40597fe105438f805")]
 [assembly: System.Reflection.AssemblyProductAttribute("landscape-be")]
 [assembly: System.Reflection.AssemblyTitleAttribute("landscape-be")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
