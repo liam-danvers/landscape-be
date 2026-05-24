@@ -1,53 +1,42 @@
-﻿using landscape_be.models;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using System.Windows.Forms;
+﻿using landscape_be.data;
+using landscape_be.mapping;
+using landscape_be.services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-internal static class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
 {
-    [STAThread]
-    private static void Main() 
-    {
-        ApplicationConfiguration.Initialize();
+    options.AddPolicy("AllowReact", policy => policy
+        .WithOrigins("http://localhost:3000")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
 
-        string conString = "Server=localhost\\SQLEXPRESS;Database=Landscape;TrustServerCertificate=true;Trusted_Connection=True;";
-        DataTable dt = new DataTable();
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-        try
-        {
-            using SqlConnection con = new SqlConnection(conString);
-            con.Open();
+// Add EF Core DbContext using the current connection string
+var connectionString = "Server=localhost\\SQLEXPRESS;Database=Landscape;TrustServerCertificate=true;Trusted_Connection=True;";
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-            // Create the employee to insert
-            Employee employee = new Employee(2, "Jeff", "Jeffington", "jeff.jeffington@gmail.com");
+builder.Services.AddScoped<EmployeeService>();
 
-            // Run insert with a dedicated command and parameters
-            string insertQuery = "INSERT INTO Employees (EmployeeID, FirstName, LastName, Email) VALUES (@Id, @FirstName, @LastName, @Email)";
-            using (SqlCommand insertCmd = new SqlCommand(insertQuery, con))
-            {
-                insertCmd.Parameters.AddWithValue("@Id", employee.Id);
-                insertCmd.Parameters.AddWithValue("@FirstName", employee.FirstName);
-                insertCmd.Parameters.AddWithValue("@LastName", employee.LastName);
-                insertCmd.Parameters.AddWithValue("@Email", employee.Email);
-                insertCmd.ExecuteNonQuery();
-            }
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<EmployeeProfile>());
 
-            // Now select and load results
-            string query = "SELECT * FROM Employees";
-            using SqlCommand cmd = new SqlCommand(query, con);
-            using SqlDataReader reader = cmd.ExecuteReader();
-            dt.Load(reader);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+var app = builder.Build();
 
-        using var form = new Form() { Text = "Employees", Width = 800, Height = 600 };
-        var grid = new DataGridView { Dock = DockStyle.Fill, ReadOnly = true, AutoGenerateColumns = true };
-        grid.DataSource = dt;
-        form.Controls.Add(grid);
+app.UseCors("AllowReact"); // enable CORS
 
-        Application.Run(form);
-    }
-}
+// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
