@@ -2,6 +2,7 @@
 using landscape_be.models.dto;
 using landscape_be.services;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
 
 namespace landscape_be.controllers
 {
@@ -32,10 +33,10 @@ namespace landscape_be.controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<EmployeeDto>> Post([FromBody] EmployeeDto dto)
-        {
-            var created = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+        public async Task<ActionResult<EmployeeDto>> AddEmployee([FromBody] EmployeeDto employeeDto)
+            {
+            var created = await _service.AddAsync(employeeDto);
+            return CreatedAtAction(nameof(GetAccount), new { name = created.FirstName }, created);
         }
     }
 }
