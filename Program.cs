@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy => policy
-        .WithOrigins("http://localhost:3000")
+        .WithOrigins("http://localhost:5173")
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
@@ -27,10 +27,10 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 builder.Services.AddScoped<EmployeeService>();
 
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<EmployeeProfile>());
-
+// enable CORS
 var app = builder.Build();
+app.UseCors("AllowReact");
 
-app.UseCors("AllowReact"); // enable CORS
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

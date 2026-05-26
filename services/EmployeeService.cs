@@ -24,6 +24,13 @@ namespace landscape_be.services
             return _mapper.Map<List<EmployeeDto>>(entities);
         }
 
+        public async Task<EmployeeDto> GetAccountAsync(string firstname)
+        {
+            var entity = await _context.Employees.FirstOrDefaultAsync(employee => employee.FirstName == firstname);
+            return _mapper.Map<EmployeeDto>(entity);
+        }
+
+
         public async Task<EmployeeDto> AddAsync(EmployeeDto employeeDto)
         {
             var entity = _mapper.Map<Employee>(employeeDto);

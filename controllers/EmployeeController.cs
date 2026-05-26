@@ -17,7 +17,6 @@ namespace landscape_be.controllers
             _service = service;
         }
 
-        // Custom URL: /api/employees/getAll
         [HttpGet("getAll")]
         public async Task<ActionResult<List<EmployeeDto>>> Get()
         {
@@ -25,7 +24,13 @@ namespace landscape_be.controllers
             return Ok(data);
         }
 
-        // Custom URL: /api/employees/add
+        [HttpGet("getAccount")]
+        public async Task<ActionResult<EmployeeDto>> GetAccount(string name)
+        {
+            var data = await _service.GetAccountAsync(name);
+            return Ok(data);
+        }
+
         [HttpPost("add")]
         public async Task<ActionResult<EmployeeDto>> Post([FromBody] EmployeeDto dto)
         {
